@@ -5,16 +5,25 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import ir.mohsenebrahimy.loginapplearn.databinding.ActivityMainBinding
+import ir.mohsenebrahimy.loginapplearn.remote.RetrofitService
+import ir.mohsenebrahimy.loginapplearn.remote.dataModel.DefaultModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) {
 
     val binding = ActivityMainBinding.inflate(
+
         LayoutInflater.from(context)
+
     )
 
     @SuppressLint("SetTextI18n")
     fun onClickHandler() {
+
         binding.btnSend.setOnClickListener {
+
             val email = binding.edtInputEmail.text.toString()
             val (isValid, error) = emailValidator(email)
 
@@ -49,7 +58,20 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
     }
 
     private fun sendCodeInEmail(email: String) {
-//        TODO("Not yet implemented")
+
+        val service = RetrofitService.apiService
+        CoroutineScope(Dispatchers.IO).launch {
+
+            val response = service.sendRequest(email)
+            if (response.isSuccessful) {
+
+                launch(Dispatchers.Main) {
+
+                    val data = response.body() as DefaultModel
+
+                }
+            }
+        }
     }
 
     private fun emailValidator(email: String): Pair<Boolean, String> {
