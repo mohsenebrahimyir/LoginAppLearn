@@ -7,6 +7,10 @@ android {
     namespace = "ir.mohsenebrahimy.loginapplearn"
     compileSdk = 34
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "ir.mohsenebrahimy.loginapplearn"
         minSdk = 21
