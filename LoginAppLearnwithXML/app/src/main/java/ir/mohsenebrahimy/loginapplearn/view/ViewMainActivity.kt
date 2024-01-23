@@ -2,11 +2,15 @@ package ir.mohsenebrahimy.loginapplearn.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import android.widget.Toast
 import ir.mohsenebrahimy.loginapplearn.databinding.ActivityMainBinding
+import ir.mohsenebrahimy.loginapplearn.model.ErrorModel
 import ir.mohsenebrahimy.loginapplearn.remote.RetrofitService
 import ir.mohsenebrahimy.loginapplearn.remote.dataModel.DefaultModel
+import ir.mohsenebrahimy.loginapplearn.remote.ext.ErrorUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,15 +65,30 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
 
         val service = RetrofitService.apiService
         CoroutineScope(Dispatchers.IO).launch {
+            try {
 
-            val response = service.sendRequest(email)
-            if (response.isSuccessful) {
 
-                launch(Dispatchers.Main) {
-
-                    val data = response.body() as DefaultModel
-
+                val response = service.sendRequest(email)
+                if (response.isSuccessful) {
+                    launch(Dispatchers.Main) {
+                        val data = response.body() as DefaultModel
+                        Toast.makeText(
+                            context,
+                            data.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } else {
+                    launch(Dispatchers.Main) {
+                        Toast.makeText(
+                            context,
+                            ErrorUtils.getError(response),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
+            } catch (e: Exception) {
+                Log.i("SERVER_ERROR", e.message.toString())
             }
         }
     }
