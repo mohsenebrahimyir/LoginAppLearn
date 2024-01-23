@@ -20,9 +20,29 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
                 binding.textInputEmail.error = error
                 return@setOnClickListener
             }
+
+            binding.btnSend.visibility = INVISIBLE
+            binding.textInputEmail.visibility = INVISIBLE
+
+            binding.txtSendEmail.visibility = VISIBLE
+            binding.textInputCode.visibility = VISIBLE
+            binding.btnConfirm.visibility = VISIBLE
+            binding.txtWrong.visibility = VISIBLE
+
+            binding.txtSendEmail.text = "Send to email: $email"
+        }
+
+        binding.txtWrong.setOnClickListener {
+
+            binding.btnSend.visibility = VISIBLE
+            binding.textInputEmail.visibility = VISIBLE
+
+            binding.txtSendEmail.visibility = INVISIBLE
+            binding.textInputCode.visibility = INVISIBLE
+            binding.btnConfirm.visibility = INVISIBLE
+            binding.txtWrong.visibility = INVISIBLE
         }
     }
-
 
     private fun emailValidator(email: String): Pair<Boolean, String> {
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"

@@ -4,5 +4,5 @@
     <string name="send_code">Send Code</string>
     <string name="code">Code</string>
     <string name="confirm">Confirm</string>
-    <string name="wrong_email">Wrong Email</string>
+    <string name="wrong_email">Wrong Email?</string>
 </resources>
