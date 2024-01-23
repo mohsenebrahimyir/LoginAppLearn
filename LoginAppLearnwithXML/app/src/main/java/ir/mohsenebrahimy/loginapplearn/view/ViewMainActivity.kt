@@ -1,5 +1,6 @@
 package ir.mohsenebrahimy.loginapplearn.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -11,6 +12,7 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
         LayoutInflater.from(context)
     )
 
+    @SuppressLint("SetTextI18n")
     fun onClickHandler() {
         binding.btnSend.setOnClickListener {
             val email = binding.edtInputEmail.text.toString()
@@ -20,6 +22,8 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
                 binding.textInputEmail.error = error
                 return@setOnClickListener
             }
+
+            sendCodeInEmail(email)
 
             binding.btnSend.visibility = INVISIBLE
             binding.textInputEmail.visibility = INVISIBLE
@@ -42,6 +46,10 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
             binding.btnConfirm.visibility = INVISIBLE
             binding.txtWrong.visibility = INVISIBLE
         }
+    }
+
+    private fun sendCodeInEmail(email: String) {
+//        TODO("Not yet implemented")
     }
 
     private fun emailValidator(email: String): Pair<Boolean, String> {
