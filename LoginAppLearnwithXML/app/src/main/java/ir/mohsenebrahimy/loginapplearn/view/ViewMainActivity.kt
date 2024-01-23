@@ -67,7 +67,6 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
         CoroutineScope(Dispatchers.IO).launch {
             try {
 
-
                 val response = service.sendRequest(email)
                 if (response.isSuccessful) {
                     launch(Dispatchers.Main) {
@@ -87,6 +86,7 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
                         ).show()
                     }
                 }
+
             } catch (e: Exception) {
                 Log.i("SERVER_ERROR", e.message.toString())
             }
