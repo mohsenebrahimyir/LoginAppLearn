@@ -13,10 +13,22 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
 
     fun onClickHandler() {
         binding.btnSend.setOnClickListener {
-            if (binding.edtInputEmail.text.toString().isEmpty()) {
-                binding.textInputEmail.error = "Email Empty"
-                return@setOnClickListener
-            }
+            if (isEmailInvalid()) return@setOnClickListener
         }
+    }
+
+    private fun isEmailInvalid(): Boolean {
+        val email = binding.edtInputEmail.text.toString()
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
+
+        if (email.isEmpty()) {
+            binding.textInputEmail.error = "Email is Empty"
+            return true
+        } else if (!email.matches(emailRegex.toRegex())) {
+            binding.textInputEmail.error = "Email is not valid format"
+            return true
+        }
+
+        return false
     }
 }
