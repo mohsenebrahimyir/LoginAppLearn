@@ -8,11 +8,13 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import ir.mohsenebrahimy.loginapplearn.databinding.ActivityMainBinding
 import ir.mohsenebrahimy.loginapplearn.remote.RetrofitService
+import ir.mohsenebrahimy.loginapplearn.remote.apiRepository.LoginApiService
 import ir.mohsenebrahimy.loginapplearn.remote.dataModel.DefaultModel
 import ir.mohsenebrahimy.loginapplearn.remote.ext.ErrorUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) {
 
@@ -80,42 +82,6 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
         }
     }
 
-    private fun verifyCode(androidId: String, code: String, email: String) {
-
-    }
-
-    private fun sendCodeInEmail(email: String) {
-
-        val service = RetrofitService.apiService
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-
-                val response = service.sendRequest(email)
-                if (response.isSuccessful) {
-                    launch(Dispatchers.Main) {
-                        val data = response.body() as DefaultModel
-                        Toast.makeText(
-                            context,
-                            data.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                } else {
-                    launch(Dispatchers.Main) {
-                        Toast.makeText(
-                            context,
-                            ErrorUtils.getError(response),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-
-            } catch (e: Exception) {
-                Log.i("SERVER_ERROR", e.message.toString())
-            }
-        }
-    }
-
     private fun inputValidator(input: String, regex: String): Pair<Boolean, String> {
         if (input.isEmpty()) {
             return false to "input is empty"
@@ -123,5 +89,52 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
             return false to "The $input is invalid"
         }
         return true to "The $input is valid"
+    }
+
+    private fun responseHandler(response: Response<DefaultModel>) {
+        if (response.isSuccessful) {
+                val data = response.body() as DefaultModel
+                Toast.makeText(
+                    context,
+                    data.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+        } else {
+                Toast.makeText(
+                    context,
+                    ErrorUtils.getError(response),
+                    Toast.LENGTH_SHORT
+                ).show()
+        }
+    }
+
+    private fun sendCodeInEmail(email: String) {
+        val service = RetrofitService.apiService
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = service.sendCodeInEmail(email)
+                launch(Dispatchers.Main) {
+                    responseHandler(response)
+                }
+            } catch (e: Exception) {
+                Log.i("SERVER_ERROR", e.message.toString())
+            }
+        }
+    }
+
+    private fun verifyCode(androidId: String, code: String, email: String) {
+        val service = RetrofitService.apiService
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = service.verifyCode(androidId, code, email)
+                launch(Dispatchers.Main) {
+                    responseHandler(response)
+                }
+            } catch (e: Exception) {
+                Log.i("SERVER_ERROR", e.message.toString())
+            }
+        }
+
     }
 }
