@@ -10,7 +10,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val view = ViewMainActivity(this)
-        val model = ModelMainActivity()
+        val model = ModelMainActivity(this)
         setContentView(view.binding.root)
 
         val presenter = PresenterMainActivity(view, model)

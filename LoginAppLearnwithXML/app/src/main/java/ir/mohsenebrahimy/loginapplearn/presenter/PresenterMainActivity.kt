@@ -9,6 +9,6 @@ class PresenterMainActivity(
 ) {
 
     fun onCreatePresenter() {
-        view.onClickHandler()
+        view.onClickHandler(model.getId())
     }
 }

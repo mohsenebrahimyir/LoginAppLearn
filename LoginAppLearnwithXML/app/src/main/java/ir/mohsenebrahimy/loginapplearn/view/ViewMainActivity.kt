@@ -23,7 +23,7 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
     )
 
     @SuppressLint("SetTextI18n")
-    fun onClickHandler() {
+    fun onClickHandler(androidId: String) {
 
         binding.btnSend.setOnClickListener {
 
@@ -63,6 +63,7 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
         }
 
         binding.btnConfirm.setOnClickListener {
+            val email = binding.edtInputEmail.text.toString()
             val code = binding.edtCode.text.toString()
             val regex = "^[0-9]{6}$"
             val (isValid, error) = inputValidator(code, regex)
@@ -73,7 +74,14 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
             } else {
                 binding.textInputCode.error = null
             }
+            
+            verifyCode(androidId, code, email)
+
         }
+    }
+
+    private fun verifyCode(androidId: String, code: String, email: String) {
+
     }
 
     private fun sendCodeInEmail(email: String) {
