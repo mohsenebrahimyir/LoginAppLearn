@@ -18,7 +18,7 @@ interface LoginApiService {
     @FormUrlEncoded
     @POST("email/login/verify")
     suspend fun verifyCode(
-        @Header("deviceUId")
+        @Header("app-device-uid") androidId: String,
         @Field("code") code: String,
         @Field("email") email: String,
     ) : Response<DefaultModel>

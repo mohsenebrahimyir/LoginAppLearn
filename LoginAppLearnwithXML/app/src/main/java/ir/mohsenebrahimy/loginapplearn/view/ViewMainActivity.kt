@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.Toast
 import ir.mohsenebrahimy.loginapplearn.databinding.ActivityMainBinding
-import ir.mohsenebrahimy.loginapplearn.model.ErrorModel
 import ir.mohsenebrahimy.loginapplearn.remote.RetrofitService
 import ir.mohsenebrahimy.loginapplearn.remote.dataModel.DefaultModel
 import ir.mohsenebrahimy.loginapplearn.remote.ext.ErrorUtils
@@ -29,11 +28,14 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
         binding.btnSend.setOnClickListener {
 
             val email = binding.edtInputEmail.text.toString()
-            val (isValid, error) = emailValidator(email)
+            val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
+            val (isValid, error) = inputValidator(email, emailRegex)
 
             if (!isValid) {
                 binding.textInputEmail.error = error
                 return@setOnClickListener
+            } else {
+                binding.textInputEmail.error = null
             }
 
             sendCodeInEmail(email)
@@ -58,6 +60,19 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
             binding.textInputCode.visibility = INVISIBLE
             binding.btnConfirm.visibility = INVISIBLE
             binding.txtWrong.visibility = INVISIBLE
+        }
+
+        binding.btnConfirm.setOnClickListener {
+            val code = binding.edtCode.text.toString()
+            val regex = "^[0-9]{6}$"
+            val (isValid, error) = inputValidator(code, regex)
+
+            if (!isValid) {
+                binding.textInputCode.error = error
+                return@setOnClickListener
+            } else {
+                binding.textInputCode.error = null
+            }
         }
     }
 
@@ -93,15 +108,12 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
         }
     }
 
-    private fun emailValidator(email: String): Pair<Boolean, String> {
-        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
-
-        if (email.isEmpty()) {
-            return false to "The email is empty"
-        } else if (!email.matches(emailRegex.toRegex())) {
-            return false to "The email is invalid"
+    private fun inputValidator(input: String, regex: String): Pair<Boolean, String> {
+        if (input.isEmpty()) {
+            return false to "input is empty"
+        } else if (!input.matches(regex.toRegex())) {
+            return false to "The $input is invalid"
         }
-
-        return true to "The email is valid"
+        return true to "The $input is valid"
     }
 }
