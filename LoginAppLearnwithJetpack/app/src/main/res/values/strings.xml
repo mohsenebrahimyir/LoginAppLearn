@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">LoginAppLearn</string>
+    <string name="title_activity_main">MainActivity</string>
+</resources>
