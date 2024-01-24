@@ -2,26 +2,35 @@ package ir.mohsenebrahimy.loginapplearn.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.Toast
+import ir.mohsenebrahimy.loginapplearn.androidWrapper.ActUtils
 import ir.mohsenebrahimy.loginapplearn.databinding.ActivityMainBinding
 import ir.mohsenebrahimy.loginapplearn.remote.RetrofitService
-import ir.mohsenebrahimy.loginapplearn.remote.apiRepository.LoginApiService
 import ir.mohsenebrahimy.loginapplearn.remote.dataModel.DefaultModel
+import ir.mohsenebrahimy.loginapplearn.remote.dataModel.GetApiModel
 import ir.mohsenebrahimy.loginapplearn.remote.ext.ErrorUtils
+import ir.mohsenebrahimy.loginapplearn.ui.HomeActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
-class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) {
+class ViewMainActivity : FrameLayout {
+
+    constructor(contextInstance: Context) : super(contextInstance)
+
+    private lateinit var utils: ActUtils
+
+    constructor(contextInstance: Context, utility: ActUtils) : super(contextInstance) {
+        utils = utility
+    }
 
     val binding = ActivityMainBinding.inflate(
-
         LayoutInflater.from(context)
-
     )
 
     @SuppressLint("SetTextI18n")
@@ -91,23 +100,6 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
         return true to "The $input is valid"
     }
 
-    private fun responseHandler(response: Response<DefaultModel>) {
-        if (response.isSuccessful) {
-                val data = response.body() as DefaultModel
-                Toast.makeText(
-                    context,
-                    data.message,
-                    Toast.LENGTH_SHORT
-                ).show()
-
-        } else {
-                Toast.makeText(
-                    context,
-                    ErrorUtils.getError(response),
-                    Toast.LENGTH_SHORT
-                ).show()
-        }
-    }
 
     private fun sendCodeInEmail(email: String) {
         val service = RetrofitService.apiService
@@ -115,7 +107,20 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
             try {
                 val response = service.sendCodeInEmail(email)
                 launch(Dispatchers.Main) {
-                    responseHandler(response)
+                    if (response.isSuccessful) {
+                        val data = response.body() as DefaultModel
+                        Toast.makeText(
+                            context,
+                            data.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            ErrorUtils.getError(response),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             } catch (e: Exception) {
                 Log.i("SERVER_ERROR", e.message.toString())
@@ -129,7 +134,29 @@ class ViewMainActivity(contextInstance: Context) : FrameLayout(contextInstance) 
             try {
                 val response = service.verifyCode(androidId, code, email)
                 launch(Dispatchers.Main) {
-                    responseHandler(response)
+                    if (response.isSuccessful) {
+                        val data = response.body() as GetApiModel
+
+                        /***
+                         TODO:
+                         save data.api in Room Database and use it for send request with
+                         authentication mode and do something ...
+                        ***/
+
+                        Toast.makeText(
+                            context,
+                            data.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        context.startActivity(Intent(context, HomeActivity::class.java))
+                        utils.finished()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            ErrorUtils.getError(response),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             } catch (e: Exception) {
                 Log.i("SERVER_ERROR", e.message.toString())
